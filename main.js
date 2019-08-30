@@ -1,31 +1,21 @@
-let canvas = document.getElementById('main-canvas');
-let ctx = canvas.getContext('2d');
+function draw() {
+    var canvas = document.getElementById('main-canvas');
+    if (canvas.getContext) {
+        var ctx = canvas.getContext('2d');
 
-let x = 0;
-let y = 0;
-let r = 50;
+        var rectangle = new Path2D();
+        rectangle.rect(10, 10, 50, 50);
 
-let w = 200;
-let h = 100;
+        var circle = new Path2D();
+        circle.moveTo(125, 35);
+        circle.arc(100, 35, 25, 0, 2 * Math.PI);
 
-// ctx.save();
-ctx.translate(canvas.width / 2, canvas.height / 2);
-ctx.scale(2, 1);
+        ctx.stroke(rectangle);
+        ctx.fill(circle);
 
-ctx.beginPath();
-ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+        var p = new Path2D("M10 10 h 80 v 80 h -80 Z");
+        ctx.stroke(p);
+    }
+}
 
-ctx.restore();
-
-ctx.fillStyle = '#8ed6ff';
-ctx.shadowColor = '#999';
-ctx.shadowBlur = 20;
-ctx.shadowOffsetX = 15;
-ctx.shadowOffsetY = 15;
-ctx.fill();
-
-
-ctx.lineWidth = 1;
-ctx.strokeStyle = 'black';
-
-ctx.stroke();
+draw();
