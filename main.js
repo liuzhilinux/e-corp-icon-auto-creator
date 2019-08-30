@@ -1,21 +1,41 @@
-function draw() {
-    var canvas = document.getElementById('main-canvas');
-    if (canvas.getContext) {
-        var ctx = canvas.getContext('2d');
+let img = new Image();
 
-        var rectangle = new Path2D();
-        rectangle.rect(10, 10, 50, 50);
+img.onload = function (ev) {
+    let imgWidth = this.width;      // 505
+    let imgHeight = this.height;    // 695
 
-        var circle = new Path2D();
-        circle.moveTo(125, 35);
-        circle.arc(100, 35, 25, 0, 2 * Math.PI);
+    let canvas = document.getElementById('main-canvas');
+    canvas.width = imgWidth;
+    canvas.height = imgHeight;
 
-        ctx.stroke(rectangle);
-        ctx.fill(circle);
+    let ctx = canvas.getContext('2d');
+    ctx.drawImage(this, 0, 0, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight);
 
-        var p = new Path2D("M10 10 h 80 v 80 h -80 Z");
-        ctx.stroke(p);
+    let imgData = ctx.getImageData(0, 0, imgWidth, imgHeight);
+    let data = imgData.data;
+
+    let imgPixSet = [];
+
+    // 统计像素分布情况，用以分析规律。
+    let pixList = {};
+
+
+    for (let i = 0, len = data.length; i < len; i += 4) {
+        let red = data[i];
+        let green = data[i + 1];
+        let blue = data[i + 2];
+        let alpha = data[i + 3];
+
+        imgPixSet.push({red, green, blue, alpha});
+
+        let key = red + ',' + green + ',' + blue + ',' + alpha;
+        if(pixList[key]) ++pixList[key];
+        else pixList[key] = 1;
+
     }
-}
 
-draw();
+    console.log(pixList);
+};
+
+img.src = 'ecorp_logo_white.png';
+// img.src = 'th.jfif';
