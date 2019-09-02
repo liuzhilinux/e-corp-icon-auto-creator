@@ -23,18 +23,34 @@ img.onload = function (ev) {
         let blue = data[i + 2];
         let alpha = data[i + 3];
 
-        imgPixSet.push({red, green, blue, alpha});
+        // imgPixSet.push({red, green, blue, alpha});
 
-        let colorDeep = (red + green + blue) / 3;
-        let alhpa = 255 - alpha;
+        // let colorDeep = (red + green + blue) / 3;
+        let ahpla = 255 - alpha;
 
-        newImageData.data[i] = alhpa;
-        newImageData.data[i + 1] = alhpa;
-        newImageData.data[i + 2] = alhpa;
-        newImageData.data[i + 3] = colorDeep;
+        newImageData.data[i] = ahpla;
+        newImageData.data[i + 1] = ahpla;
+        newImageData.data[i + 2] = ahpla;
+        newImageData.data[i + 3] = 255;
+
+        imgPixSet.push(ahpla);
     }
 
     ctx.putImageData(newImageData, 0, 0);
+
+    for (let i = 0; i < imgHeight; i++) {      // 纵坐标。
+        for (let j = 0; j < imgWidth; j++) {   // 横坐标。
+            let point = i * imgWidth + j;
+            let ahpla = imgPixSet[point];
+
+            newImageData.data[4 * point] = 255 - ahpla;
+            newImageData.data[4 * point + 1] = 255 - ahpla;
+            newImageData.data[4 * point + 2] = 255 - ahpla;
+        }
+    }
+
+    ctx.putImageData(newImageData, 0, 0);
+
 };
 
 img.src = 'ecorp_logo_white.png';
