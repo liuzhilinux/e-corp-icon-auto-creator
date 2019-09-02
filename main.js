@@ -15,10 +15,7 @@ img.onload = function (ev) {
     let data = imgData.data;
 
     let imgPixSet = [];
-
-    // 统计像素分布情况，用以分析规律。
-    let pixList = {};
-
+    let newImageData = ctx.createImageData(imgWidth, imgHeight);
 
     for (let i = 0, len = data.length; i < len; i += 4) {
         let red = data[i];
@@ -28,13 +25,16 @@ img.onload = function (ev) {
 
         imgPixSet.push({red, green, blue, alpha});
 
-        let key = red + ',' + green + ',' + blue + ',' + alpha;
-        if(pixList[key]) ++pixList[key];
-        else pixList[key] = 1;
+        let colorDeep = (red + green + blue) / 3;
+        let alhpa = 255 - alpha;
 
+        newImageData.data[i] = alhpa;
+        newImageData.data[i + 1] = alhpa;
+        newImageData.data[i + 2] = alhpa;
+        newImageData.data[i + 3] = colorDeep;
     }
 
-    console.log(pixList);
+    ctx.putImageData(newImageData, 0, 0);
 };
 
 img.src = 'ecorp_logo_white.png';
