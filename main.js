@@ -38,19 +38,50 @@ img.onload = function (ev) {
 
     ctx.putImageData(newImageData, 0, 0);
 
-    for (let i = 0; i < imgHeight; i++) {      // 纵坐标。
-        for (let j = 0; j < imgWidth; j++) {   // 横坐标。
-            let point = i * imgWidth + j;
-            let ahpla = imgPixSet[point];
+    let x = 0, y = 0;
+    let tmpAhpla = 255, tmpStatus = false, tmpArr = [], tmpPoint = [];
+    let timer = setInterval(() => {
+        let point = x + y * imgWidth;
+        let ahpla = imgPixSet[point];
 
-            newImageData.data[4 * point] = 255 - ahpla;
-            newImageData.data[4 * point + 1] = 255 - ahpla;
-            newImageData.data[4 * point + 2] = 255 - ahpla;
+        if (ahpla !== tmpAhpla) {
+            if (!tmpStatus) {
+                tmpArr.push(tmpAhpla);
+                tmpPoint.push(point - 1);
+            }
+            tmpArr.push(ahpla);
+            tmpPoint.push(point);
+            tmpStatus = true;
+        } else {
+            if (tmpStatus && tmpAhpla < 127) {
+                tmpArr.push('-');
+                tmpPoint.push('-');
+            }
+            tmpStatus = false;
         }
-    }
+        tmpAhpla = ahpla;
 
-    ctx.putImageData(newImageData, 0, 0);
+        newImageData.data[4 * point] = 255 - ahpla;
+        newImageData.data[4 * point + 1] = 255 - ahpla;
+        newImageData.data[4 * point + 2] = 255 - ahpla;
 
+        ctx.putImageData(newImageData, 0, 0);
+
+        if (y >= imgHeight) {
+            clearInterval(timer);
+        } else if (x >= imgWidth) {
+            console.log(tmpArr.join(','));
+            console.log(tmpPoint.join(','));
+            console.log('----------------------------------------------------------------');
+            tmpAhpla = 255;
+            tmpStatus = false;
+            tmpArr = [];
+            tmpPoint = [];
+
+            x = 0;
+            y++;
+        } else x++;
+    }, 1);
 };
 
 img.src = 'ecorp_logo_white.png';
