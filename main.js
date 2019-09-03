@@ -3,6 +3,7 @@ let img = new Image();
 img.onload = function (ev) {
     let imgWidth = this.width;      // 505
     let imgHeight = this.height;    // 695
+    imgHeight -= 180;               // 525
 
     let canvas = document.getElementById('main-canvas');
     canvas.width = imgWidth;
@@ -18,14 +19,7 @@ img.onload = function (ev) {
     let newImageData = ctx.createImageData(imgWidth, imgHeight);
 
     for (let i = 0, len = data.length; i < len; i += 4) {
-        let red = data[i];
-        let green = data[i + 1];
-        let blue = data[i + 2];
         let alpha = data[i + 3];
-
-        // imgPixSet.push({red, green, blue, alpha});
-
-        // let colorDeep = (red + green + blue) / 3;
         let ahpla = 255 - alpha;
 
         newImageData.data[i] = ahpla;
@@ -72,6 +66,7 @@ img.onload = function (ev) {
         } else if (x >= imgWidth) {
             console.log(tmpArr.join(','));
             console.log(tmpPoint.join(','));
+            console.log('y: ', y);
             console.log('----------------------------------------------------------------');
             tmpAhpla = 255;
             tmpStatus = false;
