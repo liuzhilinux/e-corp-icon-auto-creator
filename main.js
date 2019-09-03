@@ -3,7 +3,7 @@ let img = new Image();
 img.onload = function (ev) {
     let imgWidth = this.width;      // 505
     let imgHeight = this.height;    // 695
-    imgHeight -= 180;               // 525
+    imgHeight -= 170;               // 525
 
     let canvas = document.getElementById('main-canvas');
     canvas.width = imgWidth;
