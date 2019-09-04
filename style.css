@@ -32,3 +32,24 @@ body {
     overflow: hidden;
 }
 
+.ech {
+    margin: 24px auto;
+    width: 92%;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.ech li {
+    line-height: 12px;
+    height: 12px;
+    text-align: left;
+    margin-top: 1px;
+}
+
+.ech li span {
+    display: inline-block;
+    line-height: 12px;
+    height: 12px;
+    float: left;
+    background-color: violet;
+}
