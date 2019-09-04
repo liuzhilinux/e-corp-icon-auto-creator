@@ -34,10 +34,12 @@
      * @param idx
      */
     function setEchLengthText(idx) {
-        let span = document.querySelectorAll('#ech-list li:nth-child(' + idx + ') span')[0];
+        let li = document.querySelectorAll('#ech-list li:nth-child(' + idx + ')')[0];
+        let span = li.childNodes[0];
         let width = span.style.width;
-        width = width ? parseInt(width.replace('px', '')) : 0;
-        span.innerText = width;
+        let newSpan = document.createElement('span');
+        newSpan.innerText = width ? parseInt(width.replace('px', '')) : 0;
+        li.appendChild(newSpan);
     }
 
     let img = new Image();
@@ -81,7 +83,8 @@
             let point = x + y * imgWidth;
             let ahpla = imgPixSet[point];
 
-            if (0 !== ahpla && 255 !== ahpla) setEchLength(ahpla, getEchLength(ahpla) + 1);
+            console.log('(' + x + ', ' + y + ') => ' + ahpla);
+            if (ahpla && 0 !== ahpla && 255 !== ahpla) setEchLength(ahpla, getEchLength(ahpla) + 1);
 
             newImageData.data[4 * point] = 255 - ahpla;
             newImageData.data[4 * point + 1] = 255 - ahpla;
@@ -95,12 +98,14 @@
 
             ctx.putImageData(newImageData, 0, 0);
 
-            if (y >= imgHeight) {
+            if (y + 1 >= imgHeight && x >= imgWidth) {
                 clearInterval(timer);
 
                 for (let i = 0; i < 254; i++) {
                     setEchLengthText(i + 1);
                 }
+
+                return false;
             } else if (x >= imgWidth) {
                 x = 0;
                 y++;
