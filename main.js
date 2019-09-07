@@ -1,47 +1,4 @@
 (function () {
-    for (let i = 0; i < 254; i++) {
-        let li = document.createElement('li');
-        let span = document.createElement('span');
-        let ol = document.getElementById('ech-list');
-
-        li.appendChild(span);
-        ol.appendChild(li);
-    }
-
-    /**
-     * Set ECH item lenght.
-     * @param idx
-     * @param len
-     */
-    function setEchLength(idx, len) {
-        let span = document.querySelectorAll('#ech-list li:nth-child(' + idx + ') span')[0];
-        span.style.width = len + 'px';
-    }
-
-    /**
-     * Get the current length of the ECH item.
-     * @param idx
-     * @returns {number}
-     */
-    function getEchLength(idx) {
-        let span = document.querySelectorAll('#ech-list li:nth-child(' + idx + ') span')[0];
-        let width = span.style.width;
-        return width ? parseInt(width.replace('px', '')) : 0;
-    }
-
-    /**
-     * Set the current length text (number) to the item inside.
-     * @param idx
-     */
-    function setEchLengthText(idx) {
-        let li = document.querySelectorAll('#ech-list li:nth-child(' + idx + ')')[0];
-        let span = li.childNodes[0];
-        let width = span.style.width;
-        let newSpan = document.createElement('span');
-        newSpan.innerText = width ? parseInt(width.replace('px', '')) : 0;
-        li.appendChild(newSpan);
-    }
-
     let img = new Image();
 
     img.onload = function (ev) {
@@ -66,6 +23,7 @@
         for (let i = 0, len = data.length; i < len; i += 4) {
             let alpha = data[i + 3];
             let ahpla = 255 - alpha;
+            ahpla = ahpla > 127 ? 255 : 0;
 
             newImageData.data[i] = ahpla;
             newImageData.data[i + 1] = ahpla;
@@ -78,21 +36,25 @@
         ctx.putImageData(newImageData, 0, 0);
 
         let x = 0, y = 0;
-        let tmpAhpla = 0;
+        let tmpAhpla = 255;
         let timer = setInterval(() => {
             let point = x + y * imgWidth;
             let ahpla = imgPixSet[point];
 
             console.log('(' + x + ', ' + y + ') => ' + ahpla);
-            if (ahpla && 0 !== ahpla && 255 !== ahpla) setEchLength(ahpla, getEchLength(ahpla) + 1);
 
-            newImageData.data[4 * point] = 255 - ahpla;
-            newImageData.data[4 * point + 1] = 255 - ahpla;
-            newImageData.data[4 * point + 2] = 255 - ahpla;
+            if (tmpAhpla === ahpla && 0 === ahpla) {
+                newImageData.data[4 * point] = 255;
+                newImageData.data[4 * point + 1] = 255;
+                newImageData.data[4 * point + 2] = 255;
 
-            newImageData.data[4 * point - 4] = tmpAhpla;
-            newImageData.data[4 * point - 3] = tmpAhpla;
-            newImageData.data[4 * point - 2] = tmpAhpla;
+            }
+
+            if (0 === tmpAhpla && 255 === ahpla) {
+                newImageData.data[4 * point - 4] = 0;
+                newImageData.data[4 * point - 3] = 0;
+                newImageData.data[4 * point - 2] = 0;
+            }
 
             tmpAhpla = ahpla;
 
@@ -100,12 +62,6 @@
 
             if (y + 1 >= imgHeight && x >= imgWidth) {
                 clearInterval(timer);
-
-                for (let i = 0; i < 254; i++) {
-                    setEchLengthText(i + 1);
-                }
-
-                return false;
             } else if (x >= imgWidth) {
                 x = 0;
                 y++;
