@@ -36,12 +36,12 @@
         ctx.putImageData(newImageData, 0, 0);
 
         let x = 0, y = 0;
-        let tmpAhpla = 255;
+        let tmpAhpla = 255, outlinePoints = [];
         let timer = setInterval(() => {
             let point = x + y * imgWidth;
             let ahpla = imgPixSet[point];
 
-            console.log('(' + x + ', ' + y + ') => ' + ahpla);
+            // console.log('(' + x + ', ' + y + ') => ' + ahpla);
 
             if (tmpAhpla === ahpla && 0 === ahpla) {
                 newImageData.data[4 * point] = 255;
@@ -54,6 +54,14 @@
                 newImageData.data[4 * point - 4] = 0;
                 newImageData.data[4 * point - 3] = 0;
                 newImageData.data[4 * point - 2] = 0;
+            }
+
+            if (tmpAhpla !== ahpla) {
+                let isIn = ahpla === 0;
+                let type = isIn ? 'in' : 'out';
+                let points = {x: isIn ? x : x - 1, y, type};
+                console.log('(' + points.x + ', ' + points.y + ') => ' + type);
+                outlinePoints.push(points);
             }
 
             tmpAhpla = ahpla;
