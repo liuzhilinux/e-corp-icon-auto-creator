@@ -4,7 +4,12 @@
     img.onload = function (ev) {
         /*
          (276, 0) {(275, 1), (277, 1)}
+         (1, 187) {([-1, 1], 187), ([0, 1], 186)}
 
+         (349, 135) {(348, 136), (350, 136)}
+
+
+         (332, 83)
          */
         let imgWidth = this.width;      // 505
         let imgHeight = this.height;    // 695
@@ -17,6 +22,56 @@
         let ctx = canvas.getContext('2d');
         // ctx.imageSmoothingEnabled = false;
         ctx.drawImage(this, 0, 0, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight);
+
+        let addMouseEvt = () => {
+            function writeMessage(canvas, message) {
+                let el = document.querySelector('#msg-box');
+                el.innerText = message;
+            }
+
+            function drawGuideLine(x, y) {
+                let imageData = ctx.getImageData(0, 0, imgWidth, imgHeight);
+                let iData = imageData.data;
+
+                for (let i = 0, len = iData.length; i < len; i += 4) {
+                    let cx = parseInt(i / 4 % imgWidth);
+                    let cy = parseInt(i / 4 / imgWidth);
+
+                    if (0 === iData[i]) {
+                        'use magic';
+                    } else if (cx === x || cy === y) {
+                        imageData.data[i] = 0;
+                        imageData.data[i + 1] = 0;
+                        imageData.data[i + 2] = 255;
+                        imageData.data[i + 3] = 255;
+                    } else {
+                        imageData.data[i] = 255;
+                        imageData.data[i + 1] = 255;
+                        imageData.data[i + 2] = 255;
+                        imageData.data[i + 3] = 255;
+                    }
+
+                    if (i >= iData.length - 4) ctx.putImageData(imageData, 0, 0);
+                }
+            }
+
+            function getMousePos(canvas, evt) {
+                var rect = canvas.getBoundingClientRect();
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+            }
+
+            canvas.addEventListener('mousedown', function (evt) {
+                var mousePos = getMousePos(canvas, evt);
+                var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+                writeMessage(canvas, message);
+                drawGuideLine(mousePos.x, mousePos.y);
+            }, false);
+        };
+
+        addMouseEvt();
 
         let imgData = ctx.getImageData(0, 0, imgWidth, imgHeight);
         let data = imgData.data;
@@ -40,12 +95,8 @@
         ctx.putImageData(newImageData, 0, 0);
 
         let x = 0, y = 0;
-        let tmpAhpla = 255, outlinePoints = [];
-        let tmpInPonits = [],
-            tmpOutPonits = [],
-            anglePoints = [],
-            tmpCnt = 0,
-            tmpType = '';
+        let tmpAhpla = 255, tmpPoints = [];
+        let tmpCnt = 0, tmpType = '';
 
         let timer = setInterval(() => {
             let point = x + y * imgWidth;
@@ -55,9 +106,35 @@
             let type = isIn ? 'in' : 'out';
 
             if ('in' === tmpType && 'out' === type) tmpCnt++;
-            if (0 === x) tmpCnt = 0;
+            if (0 === x) {
+                tmpCnt = 0;
 
-            // console.log('(' + x + ', ' + y + ') => ' + ahpla + ' : ' + tmpCnt);
+                let cArr = [];
+
+                tmpPoints.forEach((item, idx) => {
+                    let cx = item.x;
+                    let cy = item.y;
+                    let ct = item.type;
+
+                    cx = cx.toString();
+                    cx = cx.length === 2 ? ' ' + cx : cx;
+                    cx = cx.length === 1 ? '  ' + cx : cx;
+
+                    cy = cy.toString();
+                    cy = cy.length === 2 ? ' ' + cy : cy;
+                    cy = cy.length === 1 ? '  ' + cy : cy;
+
+                    ct = ct.length === 2 ? ' ' + ct : ct;
+
+                    cArr.push(idx + ' -> (' + cx + ', ' + cy + ') ' + ct);
+                });
+
+                console.log(cArr.join('   | '));
+
+                tmpPoints = [];
+            }
+
+            // console.log('(' + x + ', ' + y + ') => ' + ahpla + ' - ' + type + ' : ' + tmpCnt);
 
             if (tmpAhpla === ahpla && 0 === ahpla) {
                 newImageData.data[4 * point] = 255;
@@ -72,66 +149,13 @@
                 newImageData.data[4 * point - 2] = 0;
             }
 
-            if (!tmpInPonits[tmpCnt]) tmpInPonits[tmpCnt] = {x: 0, y: 0, c: '', type: ''};
-            if (!tmpOutPonits[tmpCnt]) tmpOutPonits[tmpCnt] = {x: 0, y: 0, c: '', type: ''};
-
-            if (tmpAhpla !== ahpla) {
-                let point = {x: isIn ? x : x - 1, y, type};
-                let cStr = '';
-                outlinePoints.push(point);
-
-                let tmpPonit;
-
-                switch (type) {
-                    case 'in':
-                        tmpPonit = tmpInPonits[tmpCnt];
-                        break;
-                    case 'out':
-                        tmpPonit = tmpOutPonits[tmpCnt];
-                        break;
-                    default:
-                        break;
-                }
-
-                let tX = tmpPonit.x;
-                let tY = tmpPonit.y;
-                let tC = tmpPonit.c;
-
-                if (tY + 1 === y) {
-                    if (tX > x && '+' === tC) {
-                        anglePoints.push(tmpPonit);
-                        cStr = tmpPonit.c = '-';
-                    } else if (tX < x && '-' === tC) {
-                        anglePoints.push(tmpPonit);
-                        cStr = tmpPonit.c = '+';
-                    } else if ('*' === tC) {
-                        if (tX < x) {
-                            cStr = tmpPonit.c = '+';
-                        } else if (tX > x) {
-                            cStr = tmpPonit.c = '-';
-                        }
-                    } else if ('' === tC) {
-                        anglePoints.push({x, y, c: '*', type});
-                        cStr = tmpPonit.c = '*';
-                    }
-
-                    if ('in' === type) console.log(tmpPonit, tmpCnt);
-
-                    tmpPonit.x = x;
-                    tmpPonit.y = y;
-                    tmpPonit.type = type;
-                } else if (imgHeight === y) {
-                    anglePoints.push(point);
-                }
-
-                if ('in' === type) console.log('(' + point.x + ', ' + point.y + ') => ' + type + ' ' + cStr);
-            }
+            if (tmpAhpla !== ahpla) tmpPoints.push({x: isIn ? x : x - 1, y, type});
 
             tmpAhpla = ahpla;
             tmpType = type;
 
             ctx.putImageData(newImageData, 0, 0);
-
+            clearInterval(timer);
             if (y + 1 >= imgHeight && x + 1 >= imgWidth) {
                 clearInterval(timer);
             } else if (x >= imgWidth) {
