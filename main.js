@@ -44,7 +44,28 @@
                         imageData.data[i + 1] = 0;
                         imageData.data[i + 2] = 255;
                         imageData.data[i + 3] = 255;
-                    } else {
+                    }
+
+                    if (i >= iData.length - 4) {
+                        setTimeout(() => {
+                            ctx.putImageData(imageData, 0, 0);
+                            setTimeout(() => restoreImg(x, y), 133);
+                        }, 133);
+                    }
+                }
+            }
+
+            function restoreImg(x, y) {
+                let imageData = ctx.getImageData(0, 0, imgWidth, imgHeight);
+                let iData = imageData.data;
+
+                for (let i = 0, len = iData.length; i < len; i += 4) {
+                    let cx = parseInt(i / 4 % imgWidth);
+                    let cy = parseInt(i / 4 / imgWidth);
+
+                    if (cx === x || cy === y) {
+                        'use magic';
+                    } else if (255 === iData[i + 2]) {
                         imageData.data[i] = 255;
                         imageData.data[i + 1] = 255;
                         imageData.data[i + 2] = 255;
@@ -53,6 +74,8 @@
 
                     if (i >= iData.length - 4) ctx.putImageData(imageData, 0, 0);
                 }
+
+                ctx.putImageData(imageData, 0, 0);
             }
 
             function getMousePos(canvas, evt) {
@@ -70,8 +93,6 @@
                 drawGuideLine(mousePos.x, mousePos.y);
             }, false);
         };
-
-        addMouseEvt();
 
         let imgData = ctx.getImageData(0, 0, imgWidth, imgHeight);
         let data = imgData.data;
@@ -155,9 +176,9 @@
             tmpType = type;
 
             ctx.putImageData(newImageData, 0, 0);
-            clearInterval(timer);
             if (y + 1 >= imgHeight && x + 1 >= imgWidth) {
                 clearInterval(timer);
+                addMouseEvt();
             } else if (x >= imgWidth) {
                 x = 0;
                 y++;
