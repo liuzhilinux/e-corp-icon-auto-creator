@@ -99,6 +99,41 @@
             }, false);
         };
 
+        function strokeOverAll() {
+            ctx.beginPath();
+
+            [
+                {from: {x: 277, y: 1}, to: {x: 332, y: 83}},
+                {from: {x: 332, y: 84}, to: {x: 168, y: 195}},
+                {from: {x: 168, y: 196}, to: {x: 196, y: 237}},
+                {from: {x: 199, y: 237}, to: {x: 348, y: 136}},
+                {from: {x: 350, y: 136}, to: {x: 405, y: 218}},
+                {from: {x: 405, y: 219}, to: {x: 253, y: 322}},
+                {from: {x: 253, y: 322}, to: {x: 281, y: 364}},
+                {from: {x: 284, y: 364}, to: {x: 447, y: 254}},
+                {from: {x: 448, y: 254}, to: {x: 503, y: 336}},
+                {from: {x: 503, y: 337}, to: {x: 228, y: 523}},
+                {from: {x: 227, y: 523}, to: {x: 1, y: 187}},
+                {from: {x: 1, y: 186}, to: {x: 275, y: 1}}
+            ].forEach((item, idx) => {
+                ctx.moveTo(item.from.x, item.from.y);
+                ctx.lineTo(item.to.x, item.to.y);
+            });
+
+            ctx.closePath();
+
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineCap = ['butt', 'round', 'square'][0];
+
+            ctx.stroke();
+
+            ctx.fillStyle = '#00ff00';
+            ctx.fill();
+        }
+
+        strokeOverAll();
+
         let imgData = ctx.getImageData(0, 0, imgWidth, imgHeight);
         let data = imgData.data;
 
@@ -184,6 +219,7 @@
             if (y + 1 >= imgHeight && x + 1 >= imgWidth) {
                 clearInterval(timer);
                 addMouseEvt();
+                strokeOverAll();
             } else if (x >= imgWidth) {
                 x = 0;
                 y++;
