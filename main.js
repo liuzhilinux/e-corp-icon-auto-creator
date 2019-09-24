@@ -131,9 +131,7 @@
             ctx.fillStyle = '#00ff00';
             ctx.fill();
         }
-
-        strokeOverAll();
-
+git
         let imgData = ctx.getImageData(0, 0, imgWidth, imgHeight);
         let data = imgData.data;
 
