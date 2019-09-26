@@ -31,10 +31,3 @@ body {
 
     overflow: hidden;
 }
-
-#msg-box {
-    width: 1200px;
-    margin: 48px auto 10px auto;
-
-    font-size: 24px;
-}
