@@ -103,32 +103,33 @@
             ctx.beginPath();
 
             [
-                {from: {x: 277, y: 1}, to: {x: 332, y: 83}},
-                {from: {x: 332, y: 84}, to: {x: 168, y: 195}},
-                {from: {x: 168, y: 196}, to: {x: 196, y: 237}},
-                {from: {x: 199, y: 237}, to: {x: 348, y: 136}},
-                {from: {x: 350, y: 136}, to: {x: 405, y: 218}},
-                {from: {x: 405, y: 219}, to: {x: 253, y: 322}},
-                {from: {x: 253, y: 322}, to: {x: 281, y: 364}},
-                {from: {x: 284, y: 364}, to: {x: 447, y: 254}},
-                {from: {x: 448, y: 254}, to: {x: 503, y: 336}},
-                {from: {x: 503, y: 337}, to: {x: 228, y: 523}},
-                {from: {x: 227, y: 523}, to: {x: 1, y: 187}},
-                {from: {x: 1, y: 186}, to: {x: 275, y: 1}}
+                {x: 276.376618, y: 0.070598},
+                {x: 332.461321, y: 83.687786},
+                {x: 167.532938, y: 195.316099},
+                {x: 196.949304, y: 238.390042},
+                {x: 349.374905, y: 135.068043},
+                {x: 405.461160, y: 218.687546},
+                {x: 252.999979, y: 321.999969},
+                {x: 281.930864, y: 365.396297},
+                {x: 447.688423, y: 253.535471},
+                {x: 503.461450, y: 336.687978},
+                {x: 227.312677, y: 523.464790},
+                {x: 0.537380, y: 186.312286},
             ].forEach((item, idx) => {
-                ctx.moveTo(item.from.x, item.from.y);
-                ctx.lineTo(item.to.x, item.to.y);
+                idx === 0 ? ctx.moveTo(item.x, item.y) : ctx.lineTo(item.x, item.y);
             });
 
             ctx.closePath();
 
             ctx.lineWidth = 1;
-            ctx.strokeStyle = '#00ff00';
+            ctx.strokeStyle = 'rgba(0, 255, 0, 64)';
             ctx.lineCap = ['butt', 'round', 'square'][0];
+            ctx.lineCap = ['butt', 'round', 'square'][0];
+            ctx.lineJoin = ['bevel', 'round', 'miter'][0];
 
             ctx.stroke();
 
-            ctx.fillStyle = '#00ff00';
+            ctx.fillStyle = 'rgba(0, 255, 0, 32)';
             ctx.fill();
         }
 
