@@ -21,4 +21,30 @@
     let ctx = canvas.getContext('2d');
     // ctx.imageSmoothingEnabled = false;
 
+
+    ctx.beginPath();
+
+    metaData.forEach((item, idx) => {
+        idx === 0 ? ctx.moveTo(item.x, item.y) : ctx.lineTo(item.x, item.y);
+    });
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.closePath();
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(127, 1, 105, .25)';
+
+    ctx.lineCap = ['butt', 'round', 'square'][0];
+    ctx.lineJoin = ['bevel', 'round', 'miter'][0];
+    ctx.miterLimit = 0;
+
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(127, 1, 105, .125)';
+
+    ctx.fill();
+
+
 })();
